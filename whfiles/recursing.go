@@ -48,7 +48,7 @@ func ReadDirContent(dirPath string) ([]TfullFile) {
 		// translate into own TfullFile struct
 		var tmpItem TfullFile
 
-		tmpItem.Name = dirPath
+		tmpItem.Path = dirPath
 		tmpItem.Name = allContent[i].Name()
 
 		switch {
