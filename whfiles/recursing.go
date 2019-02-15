@@ -6,7 +6,6 @@ import (
 	"os/user"
 	"log"
 	"sort"
-	"fmt"
 	"path/filepath"
 )
 
@@ -20,15 +19,33 @@ type tFullFile struct {
 
 // provide interface to sort by name
 type sortName []tFullFile
-func (f sortName)	Len() int				{ return len(f) }
-func (f sortName)	Swap(x, y int)			{ f[x], f[y] = f[y], f[x] }
-func (f sortName)	Less(x, y int) bool	{ return f[x].name < f[y].name }
+
+func (f sortName)	Len() int {
+	return len(f)
+}
+
+func (f sortName)	Swap(x, y int) {
+	f[x], f[y] = f[y], f[x]
+}
+
+func (f sortName)	Less(x, y int) bool {
+	return f[x].name < f[y].name
+}
 
 // provide interface to sort by path
 type sortPath	[]tFullFile
-func (f sortPath)	Len() int				{ return len(f) }
-func (f sortPath)	Swap(x, y int)			{ f[x], f[y] = f[y], f[x] }
-func (f sortPath)	Less(x, y int) bool	{ return f[x].path < f[y].path }
+
+func (f sortPath)	Len() int {
+	return len(f)
+}
+
+func (f sortPath)	Swap(x, y int) {
+	f[x], f[y] = f[y], f[x]
+}
+
+func (f sortPath)	Less(x, y int) bool {
+	return f[x].path < f[y].path
+}
 
 
 func setHomeDir() string {
