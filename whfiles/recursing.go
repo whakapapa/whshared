@@ -11,9 +11,9 @@ import (
 
 
 type tFullFile struct {
-	name		string
-	path		string
-	isDir		bool
+	Name		string
+	Path		string
+	IsDir		bool
 }
 
 
@@ -29,7 +29,7 @@ func (f sortName)	Swap(x, y int) {
 }
 
 func (f sortName)	Less(x, y int) bool {
-	return f[x].name < f[y].name
+	return f[x].Name < f[y].Name
 }
 
 // provide interface to sort by path
@@ -44,7 +44,7 @@ func (f sortPath)	Swap(x, y int) {
 }
 
 func (f sortPath)	Less(x, y int) bool {
-	return f[x].path < f[y].path
+	return f[x].Name < f[y].Name
 }
 
 
@@ -79,14 +79,14 @@ func ReadDirContent(dirPath string) ([]tFullFile) {
 		// translate into own tFullFile struct
 		var tmpItem tFullFile
 
-		tmpItem.path = dirPath
-		tmpItem.name = allContent[i].Name()
+		tmpItem.Name = dirPath
+		tmpItem.Name = allContent[i].Name()
 
 		switch {
 		case allContent[i].IsDir():
-			tmpItem.isDir = true
+			tmpItem.IsDir = true
 		default:
-			tmpItem.isDir = false
+			tmpItem.IsDir = false
 		}
 		allItems = append(allItems, tmpItem)
 	}
@@ -101,7 +101,7 @@ func CatalogByPattern(allItems []tFullFile, regPattern string) ([]tFullFile, []s
 
 	// filter results based on regPattern
 	for i := range allItems {
-		keepItem, err := filepath.Match(regPattern, allItems[i].name)
+		keepItem, err := filepath.Match(regPattern, allItems[i].Name)
 		if err != nil {
 			log.Println(err)
 		}
@@ -112,8 +112,8 @@ func CatalogByPattern(allItems []tFullFile, regPattern string) ([]tFullFile, []s
 
 	// return all newly found dirs for further parsing
 	for i := range allItems {
-		if allItems[i].isDir {
-			parseDirs = append(parseDirs, allItems[i].name)
+		if allItems[i].IsDir {
+			parseDirs = append(parseDirs, allItems[i].Name)
 		}
 	}
 	return resultCatalog, parseDirs
@@ -185,10 +185,10 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 		for i := range fullList {
 			switch {
 				// directories only
-			case kinds == 0 && fullList[i].isDir:
+			case kinds == 0 && fullList[i].IsDir:
 				wantedItems = append(wantedItems, fullList[i])
 				// files only
-			case kinds == 1 && fullList[i].isDir == false:
+			case kinds == 1 && fullList[i].IsDir == false:
 				wantedItems = append(wantedItems, fullList[i])
 			}
 		}
