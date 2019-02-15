@@ -126,7 +126,7 @@ func (dirPath TdirPath) BuildFullCatalog(kinds int, recurse bool, regPattern str
 	remainingDirs = append(remainingDirs, dirPath)
 
 	for len(remainingDirs) > 0 {
-		newItems, newDirs := CatalogByPattern((remainingDirs[0])ReadDirContent(), regPattern)
+		newItems, newDirs := remainingDirs[0].CatalogByPattern(ReadDirContent(), regPattern)
 
 		for i := range newItems {
 			// add new items to fullList
