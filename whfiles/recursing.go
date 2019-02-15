@@ -16,10 +16,8 @@ type TfullFile struct {
 	IsDir		bool
 }
 
-type TdirPath string
 
-
-func setHomeDir() TdirPath {
+func setHomeDir() string {
 	buddy, err := user.Current()
 	if err != nil {
 		log.Println(err)
@@ -30,7 +28,7 @@ func setHomeDir() TdirPath {
 
 // deliver full directory content in TfullFile struct
 // to be evaluated and stripped in caller
-func (dirPath TdirPath) ReadDirContent() ([]TfullFile) {
+func (dirPath string) ReadDirContent() ([]TfullFile) {
 
 	currentDir, err := os.Open(dirPath)
 	if err != nil {
@@ -91,7 +89,7 @@ func CatalogByPattern(allItems []TfullFile, regPattern string) ([]TfullFile, []s
 }
 
 
-func (dirPath TdirPath) BuildFullCatalog(kinds int, recurse bool, regPattern string) ([]TfullFile, int, int) {
+func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) ([]TfullFile, int, int) {
 	// kinds are for now: 0: dirs, 1: files, 2: both
 	var fullList []TfullFile
 	var remainingDirs []string
