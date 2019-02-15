@@ -175,7 +175,7 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 	}
 
 	// finally sort by name and path
-	sort.Sort(sortName(wantedItems))
-	sort.Sort(sortPath(wantedItems))
+	sort.Sort(SortName(wantedItems))
+	sort.Sort(SortPath(wantedItems))
 	return wantedItems, cDirs, cFiles
 }

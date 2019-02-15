@@ -4,31 +4,31 @@ package whfiles
 
 
 // sort by name
-type sortName []TfullFile
+type SortName []TfullFile
 
-func (f sortName)	Len() int {
+func (f SortName)	Len() int {
 	return len(f)
 }
 
-func (f sortName)	Swap(x, y int) {
+func (f SortName)	Swap(x, y int) {
 	f[x], f[y] = f[y], f[x]
 }
 
-func (f sortName)	Less(x, y int) bool {
+func (f SortName)	Less(x, y int) bool {
 	return f[x].Name < f[y].Name
 }
 
 // path
-type sortPath	[]TfullFile
+type SortPath	[]TfullFile
 
-func (f sortPath)	Len() int {
+func (f SortPath)	Len() int {
 	return len(f)
 }
 
-func (f sortPath)	Swap(x, y int) {
+func (f SortPath)	Swap(x, y int) {
 	f[x], f[y] = f[y], f[x]
 }
 
-func (f sortPath)	Less(x, y int) bool {
+func (f SortPath)	Less(x, y int) bool {
 	return f[x].Name < f[y].Name
 }
