@@ -10,15 +10,25 @@ import (
 )
 
 
-type tFullFile struct {
+type TfullFile struct {
 	Name		string
 	Path		string
 	IsDir		bool
 }
 
-// deliver full directory content in tFullFile struct
+
+func setHomeDir() string {
+	buddy, err := user.Current()
+	if err != nil {
+		log.Println(err)
+	}
+	return buddy.HomeDir
+}
+
+
+// deliver full directory content in TfullFile struct
 // to be evaluated and stripped in caller
-func ReadDirContent(dirPath string) ([]tFullFile) {
+func ReadDirContent(dirPath string) ([]TfullFile) {
 
 	currentDir, err := os.Open(dirPath)
 	if err != nil {
@@ -32,11 +42,11 @@ func ReadDirContent(dirPath string) ([]tFullFile) {
 		log.Println(err)
 	}
 
-	// transfer into tFullFile struct
-	var allItems []tFullFile
+	// transfer into TfullFile struct
+	var allItems []TfullFile
 	for i := range allContent {
-		// translate into own tFullFile struct
-		var tmpItem tFullFile
+		// translate into own TfullFile struct
+		var tmpItem TfullFile
 
 		tmpItem.Name = dirPath
 		tmpItem.Name = allContent[i].Name()
@@ -53,9 +63,9 @@ func ReadDirContent(dirPath string) ([]tFullFile) {
 }
 
 
-func CatalogByPattern(allItems []tFullFile, regPattern string) ([]tFullFile, []string) {
+func CatalogByPattern(allItems []TfullFile, regPattern string) ([]TfullFile, []string) {
 
-	var resultCatalog []tFullFile
+	var resultCatalog []TfullFile
 	var parseDirs []string
 
 	// filter results based on regPattern
@@ -79,9 +89,9 @@ func CatalogByPattern(allItems []tFullFile, regPattern string) ([]tFullFile, []s
 }
 
 
-func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) ([]tFullFile, int, int) {
+func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) ([]TfullFile, int, int) {
 	// kinds are for now: 0: dirs, 1: files, 2: both
-	var fullList []tFullFile
+	var fullList []TfullFile
 	var remainingDirs []string
 
 	// check if item exists in fs
@@ -135,7 +145,7 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 	}
 
 	// now keep only wanted items (files and/or directories)
-	var wantedItems []tFullFile
+	var wantedItems []TfullFile
 
 	switch {
 	case kinds == 2:
