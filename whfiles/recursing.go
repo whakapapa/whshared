@@ -16,47 +16,6 @@ type tFullFile struct {
 	IsDir		bool
 }
 
-
-// provide interface to sort by name
-type sortName []tFullFile
-
-func (f sortName)	Len() int {
-	return len(f)
-}
-
-func (f sortName)	Swap(x, y int) {
-	f[x], f[y] = f[y], f[x]
-}
-
-func (f sortName)	Less(x, y int) bool {
-	return f[x].Name < f[y].Name
-}
-
-// provide interface to sort by path
-type sortPath	[]tFullFile
-
-func (f sortPath)	Len() int {
-	return len(f)
-}
-
-func (f sortPath)	Swap(x, y int) {
-	f[x], f[y] = f[y], f[x]
-}
-
-func (f sortPath)	Less(x, y int) bool {
-	return f[x].Name < f[y].Name
-}
-
-
-func setHomeDir() string {
-	buddy, err := user.Current()
-	if err != nil {
-		log.Println(err)
-	}
-	return buddy.HomeDir
-}
-
-
 // deliver full directory content in tFullFile struct
 // to be evaluated and stripped in caller
 func ReadDirContent(dirPath string) ([]tFullFile) {
@@ -120,7 +79,7 @@ func CatalogByPattern(allItems []tFullFile, regPattern string) ([]tFullFile, []s
 }
 
 
-func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) []tFullFile {
+func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) ([]tFullFile, int, int) {
 	// kinds are for now: 0: dirs, 1: files, 2: both
 	var fullList []tFullFile
 	var remainingDirs []string
@@ -193,11 +152,20 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 			}
 		}
 	}
-	// finally sort...
-	// ... first by name
-	// ... then by path
 
+	// provide simple stats
+	var cFiles, cDirs int
+	for i := range wantedItems {
+		switch {
+		case  wantedItems[i].IsDir:
+			cDirs += 1
+		default:
+			cFiles += 1
+		}
+	}
+
+	// finally sort by name and path
 	sort.Sort(sortName(wantedItems))
 	sort.Sort(sortPath(wantedItems))
-	return wantedItems
+	return wantedItems, cDirs, cFiles
 }
