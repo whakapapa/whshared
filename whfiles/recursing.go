@@ -28,7 +28,7 @@ func setHomeDir() string {
 
 // deliver full directory content in TfullFile struct
 // to be evaluated and stripped in caller
-func (dirPath string) ReadDirContent() ([]TfullFile) {
+func ReadDirContent(dirPath string) ([]TfullFile) {
 
 	currentDir, err := os.Open(dirPath)
 	if err != nil {
@@ -124,7 +124,7 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 	remainingDirs = append(remainingDirs, dirPath)
 
 	for len(remainingDirs) > 0 {
-		newItems, newDirs := remainingDirs[0].CatalogByPattern(ReadDirContent(), regPattern)
+		newItems, newDirs := CatalogByPattern(ReadDirContent(remainingDirs[0]), regPattern)
 
 		for i := range newItems {
 			// add new items to fullList
