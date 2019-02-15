@@ -16,8 +16,10 @@ type TfullFile struct {
 	IsDir		bool
 }
 
+type TdirPath string
 
-func setHomeDir() string {
+
+func setHomeDir() TdirPath {
 	buddy, err := user.Current()
 	if err != nil {
 		log.Println(err)
@@ -28,7 +30,7 @@ func setHomeDir() string {
 
 // deliver full directory content in TfullFile struct
 // to be evaluated and stripped in caller
-func ReadDirContent(dirPath string) ([]TfullFile) {
+func (dirPath TdirPath) ReadDirContent() ([]TfullFile) {
 
 	currentDir, err := os.Open(dirPath)
 	if err != nil {
@@ -89,7 +91,7 @@ func CatalogByPattern(allItems []TfullFile, regPattern string) ([]TfullFile, []s
 }
 
 
-func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) ([]TfullFile, int, int) {
+func (dirPath TdirPath) BuildFullCatalog(kinds int, recurse bool, regPattern string) ([]TfullFile, int, int) {
 	// kinds are for now: 0: dirs, 1: files, 2: both
 	var fullList []TfullFile
 	var remainingDirs []string
@@ -124,7 +126,7 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 	remainingDirs = append(remainingDirs, dirPath)
 
 	for len(remainingDirs) > 0 {
-		newItems, newDirs := CatalogByPattern(ReadDirContent(remainingDirs[0]), regPattern)
+		newItems, newDirs := CatalogByPattern((remainingDirs[0])ReadDirContent(), regPattern)
 
 		for i := range newItems {
 			// add new items to fullList
