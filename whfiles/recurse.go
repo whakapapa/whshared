@@ -163,19 +163,33 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 		}
 	}
 
-	// provide simple stats
-	var cFiles, cDirs int
-	for i := range wantedItems {
-		switch {
-		case  wantedItems[i].IsDir:
-			cDirs += 1
-		default:
-			cFiles += 1
-		}
-	}
 
 	// finally sort by name and path
 	sort.Sort(SortName(wantedItems))
 	sort.Sort(SortPath(wantedItems))
 	return wantedItems, cDirs, cFiles
+}
+
+
+func CountFiles(cat []TfullFile) int {
+	// provide simple stats
+	var cFiles int
+	for i := range wantedItems {
+		if cat[i].IsDir == false {
+			cFiles += 1
+		}
+	}
+	return cFiles
+}
+
+
+func CountDirs(cat []TfullFile) int {
+	// provide simple stats
+	var cDirs int
+	for i := range wantedItems {
+		if cat[i].IsDir {
+			cDirs += 1
+		}
+	}
+	return cDirs
 }
