@@ -89,7 +89,7 @@ func CatalogByPattern(allItems []TfullFile, regPattern string) ([]TfullFile, []s
 }
 
 
-func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) ([]TfullFile, int, int) {
+func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) []TfullFile {
 	// kinds are for now: 0: dirs, 1: files, 2: both
 	var fullList []TfullFile
 	var remainingDirs []string
