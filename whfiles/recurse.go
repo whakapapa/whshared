@@ -167,14 +167,14 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 	// finally sort by name and path
 	sort.Sort(SortName(wantedItems))
 	sort.Sort(SortPath(wantedItems))
-	return wantedItems, cDirs, cFiles
+	return wantedItems
 }
 
 
 func CountFiles(cat []TfullFile) int {
 	// provide simple stats
 	var cFiles int
-	for i := range wantedItems {
+	for i := range cat {
 		if cat[i].IsDir == false {
 			cFiles += 1
 		}
@@ -186,7 +186,7 @@ func CountFiles(cat []TfullFile) int {
 func CountDirs(cat []TfullFile) int {
 	// provide simple stats
 	var cDirs int
-	for i := range wantedItems {
+	for i := range cat {
 		if cat[i].IsDir {
 			cDirs += 1
 		}
