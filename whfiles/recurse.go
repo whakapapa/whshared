@@ -7,73 +7,80 @@ import (
 	"log"
 	"sort"
 	"path/filepath"
+	"time"
 )
 
 
-type TfullFile struct {
+type T_FullFile struct {
 	Name		string
 	Path		string
 	IsDir		bool
+	Size		int64
+	Mod		time.Time
+}
+
+
+func CheckError (e err) {
+	if e != nil {
+		log.Println(e)
+	}
 }
 
 
 func setHomeDir() string {
 	buddy, err := user.Current()
-	if err != nil {
-		log.Println(err)
-	}
+	CheckError(err)
+
 	return buddy.HomeDir
 }
 
 
-// deliver full directory content in TfullFile struct
+// deliver full directory content in T_FullFile struct
 // to be evaluated and stripped in caller
-func ReadDirContent(dirPath string) ([]TfullFile) {
+func ReadDirContent(dirPath string) ([]T_FullFile) {
 
 	currentDir, err := os.Open(dirPath)
-	if err != nil {
-		log.Println(err)
-	}
+	CheckError(err)
 	defer currentDir.Close()
 
 	// catch all items from the current directory
 	allContent, err := currentDir.Readdir(0)
-	if err != nil {
-		log.Println(err)
-	}
+	CheckError(err)
 
-	// transfer into TfullFile struct
-	var allItems []TfullFile
-	for i := range allContent {
-		// translate into own TfullFile struct
-		var tmpItem TfullFile
+	// transfer into T_FullFile struct
+	var allItems []T_FullFile
+	for _, v := range allContent {
+		// translate into own T_FullFile struct
+		var tmpItem T_FullFile
 
 		tmpItem.Path = dirPath
-		tmpItem.Name = allContent[i].Name()
+		tmpItem.Name = v.Name()
 
 		switch {
-		case allContent[i].IsDir():
+		case v.IsDir():
 			tmpItem.IsDir = true
 		default:
 			tmpItem.IsDir = false
 		}
+
+		tmpItem.Size = v.Size()
+		tmpItem.Mod = v.ModTime()
+		
 		allItems = append(allItems, tmpItem)
 	}
 	return allItems
 }
 
 
-func CatalogByPattern(allItems []TfullFile, regPattern string) ([]TfullFile, []string) {
+func CatalogByPattern(allItems []T_FullFile, regPattern string) ([]T_FullFile, []string) {
 
-	var resultCatalog []TfullFile
+	var resultCatalog []T_FullFile
 	var parseDirs []string
 
 	// filter results based on regPattern
 	for i := range allItems {
 		keepItem, err := filepath.Match(regPattern, allItems[i].Name)
-		if err != nil {
-			log.Println(err)
-		}
+		CheckError(err)
 		if keepItem {
 			resultCatalog = append(resultCatalog, allItems[i])
 		}
@@ -89,22 +96,15 @@ func CatalogByPattern(allItems []TfullFile, regPattern string) ([]TfullFile, []s
 }
 
 
-func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) []TfullFile {
+func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string) []T_FullFile {
 	// kinds are for now: 0: dirs, 1: files, 2: both
-	var fullList []TfullFile
+	var fullList []T_FullFile
 	var remainingDirs []string
 
 	// check if item exists in fs
 	// fallback user home directory
 	ref, err := os.Stat(dirPath)
-	if err != nil {
-		log.Println(err)
-		log.Println("path or file does not exist, using home directory instead")
-		dirPath = setHomeDir() + "/"
-		log.Println(dirPath)
-		// reopen the connection
-		ref, _ = os.Stat(dirPath)
-	}
+	CheckError(err)
 
 	// if item exists, but is file not dir
 	// construct base dir from string
@@ -145,7 +145,7 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 	}
 
 	// now keep only wanted items (files and/or directories)
-	var wantedItems []TfullFile
+	var wantedItems []T_FullFile
 
 	switch {
 	case kinds == 2:
@@ -165,13 +165,13 @@ func BuildFullCatalog(dirPath string, kinds int, recurse bool, regPattern string
 
 
 	// finally sort by name and path
-	sort.Sort(SortName(wantedItems))
-	sort.Sort(SortPath(wantedItems))
+	sort.Sort(T_SortByName(wantedItems))
+	sort.Sort(T_SortByPath(wantedItems))
 	return wantedItems
 }
 
 
-func CountFiles(cat []TfullFile) int {
+func CountFiles(cat []T_FullFile) int {
 	// provide simple stats
 	var cFiles int
 	for i := range cat {
@@ -183,7 +183,7 @@ func CountFiles(cat []TfullFile) int {
 }
 
 
-func CountDirs(cat []TfullFile) int {
+func CountDirs(cat []T_FullFile) int {
 	// provide simple stats
 	var cDirs int
 	for i := range cat {
